@@ -7,3 +7,6 @@
 .vscode/
 .pytest_cache
 src.egg-info
+
+# Python Virtual Environment
+env/
