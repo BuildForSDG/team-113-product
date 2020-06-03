@@ -40,7 +40,6 @@ def not_found(error):
         "success": False
     }), 404
 
-    # return render_template('404.html'), 404
 
 @errors_bp.app_errorhandler(405)
 def not_found(error):

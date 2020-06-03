@@ -10,3 +10,4 @@ src.egg-info
 
 # Python Virtual Environment
 env/
+venv/
