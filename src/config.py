@@ -33,12 +33,28 @@ class DevelopmentConfig(object):
     # Secret key for signing cookies
     SECRET_KEY = os.environ.get('SECRET_KEY') or "this-should-be-a-secret"
 
+    #flask mail config
+    MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'smtp.gmail.com'
+    MAIL_PORT = os.environ.get('MAIL_PORT') or 587
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') or True
+    MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL') or False
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'email@gmail.com'
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or "passworg"
 
-class TestConfig(DevelopmentConfig):
+
+    ADMIN = "email@gmail.com"
+
+
+class TestingConfig(DevelopmentConfig):
     TESTING = True
     
     # This uses an in-memory SQLite database without opening a disk file
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_DATABASE_URI =  'sqlite:///' 
     
 
 # Remember to setup a deployment config class
+
+app_config = {
+    "development": DevelopmentConfig,
+    "testing" : TestingConfig,
+}

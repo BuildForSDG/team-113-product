@@ -1,8 +1,8 @@
 from flask import Flask, render_template, jsonify
-from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
-from src.config import DevelopmentConfig
+from src.config import DevelopmentConfig, TestingConfig
 from flask_migrate import Migrate
+from flask_mail import Mail
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -13,11 +13,10 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '.env'))
 
 db = SQLAlchemy()
+migrate = Migrate()
+mail = Mail()
 
-login = LoginManager()
-login.login_view = 'auth.login'
-
-def create_app(config_class=DevelopmentConfig):
+def create_app(config_class=TestingConfig):
     app = Flask(__name__)
 
     # Setup configurations
@@ -26,17 +25,20 @@ def create_app(config_class=DevelopmentConfig):
     # Import blueprints
     from src.app.blueprints.api_v1.controllers import api_v1_bp
     from src.app.blueprints.errors.handlers import errors_bp
+    from src.app.blueprints.auth.routes import auth_bp
 
     # Register blueprints
     app.register_blueprint(errors_bp)
-    app.register_blueprint(api_v1_bp, url_prefix='/api/v1')
+    app.register_blueprint(api_v1_bp, url_prefix='/api_v1')
+    app.register_blueprint(auth_bp, url_prefix="/auth")
 
+    #setup flask instance extensions
     db.init_app(app)
+    migrate.init_app(app, db)
+    mail.init_app(app)
 
-    Migrate(app, db)
-    
-    # Setup login manager
-    login.init_app(app)
+    with app.app_context():
+        db.create_all()
     
 
     if not app.debug and not app.testing:
